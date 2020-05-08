@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require_relative "../path"
-require Spec::Path.lib_dir.join("bundler/deprecate")
 include Spec::Path
 
 $LOAD_PATH.unshift(*Dir[Spec::Path.base_system_gems.join("gems/{artifice,mustermann,rack,tilt,sinatra,ruby2_keywords}-*/lib")].map(&:to_s))
@@ -44,7 +43,7 @@ class Endpoint < Sinatra::Base
     def dependencies_for(gem_names, gem_repo = GEM_REPO)
       return [] if gem_names.nil? || gem_names.empty?
 
-      require "#{Spec::Path.lib_dir}/bundler"
+      require "bundler/deprecate"
       Bundler::Deprecate.skip_during do
         all_specs = %w[specs.4.8 prerelease_specs.4.8].map do |filename|
           Marshal.load(File.open(gem_repo.join(filename)).read)
