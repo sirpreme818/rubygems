@@ -136,8 +136,6 @@ RSpec.describe "Bundler.setup" do
     end
 
     it "orders the load path correctly when there are dependencies" do
-      system_gems :bundler
-
       install_gemfile <<-G
         source "#{file_uri_for(gem_repo1)}"
         gem "rails"
@@ -802,7 +800,7 @@ end
       Dir.mkdir(gems_dir)
       Dir.mkdir(specifications_dir)
 
-      FileUtils.ln_s(root, File.join(gems_dir, full_name))
+      FileUtils.ln_s(source_root, File.join(gems_dir, full_name))
 
       gemspec_content = File.binread(gemspec).
                 sub("Bundler::VERSION", %("#{Bundler::VERSION}")).
@@ -818,7 +816,7 @@ end
 
       ruby <<-R, :env => { "GEM_PATH" => symlinked_gem_home }, :no_lib => true
         TracePoint.trace(:class) do |tp|
-          if tp.path.include?("bundler") && !tp.path.start_with?("#{root}")
+          if tp.path.include?("bundler") && !tp.path.start_with?("#{source_root}")
             puts "OMG. Defining a class from another bundler at \#{tp.path}:\#{tp.lineno}"
           end
         end
@@ -1204,7 +1202,7 @@ end
     describe "default gem activation" do
       let(:exemptions) do
         exempts = if Gem::Version.new(Gem::VERSION) >= Gem::Version.new("2.7")
-          %w[did_you_mean]
+          %w[did_you_mean uri]
         else
           %w[io-console openssl]
         end << "bundler"

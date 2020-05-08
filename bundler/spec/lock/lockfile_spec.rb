@@ -28,6 +28,8 @@ RSpec.describe "the lockfile format" do
   end
 
   it "updates the lockfile's bundler version if current ver. is newer" do
+    system_gems "bundler-1.8.2"
+
     lockfile <<-L
       GIT
         remote: git://github.com/nex3/haml.git
@@ -55,6 +57,8 @@ RSpec.describe "the lockfile format" do
 
       gem "rack"
     G
+
+    bundle "update --bundler"
 
     lockfile_should_be <<-G
       GEM
@@ -206,6 +210,8 @@ RSpec.describe "the lockfile format" do
     current_version = Bundler::VERSION
     older_major = previous_major(current_version)
 
+    system_gems "bundler-#{older_major}"
+
     lockfile <<-L
       GEM
         remote: #{file_uri_for(gem_repo1)}/
@@ -227,6 +233,8 @@ RSpec.describe "the lockfile format" do
 
       gem "rack"
     G
+
+    bundle "update --bundler"
 
     expect(err).to include(
       "Warning: the lockfile is being updated to Bundler " \
