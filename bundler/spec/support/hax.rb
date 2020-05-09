@@ -9,10 +9,16 @@ module Gem
     Gem.ruby = ENV["RUBY"]
   end
 
-  class Platform
-    @local = new(ENV["BUNDLER_SPEC_PLATFORM"]) if ENV["BUNDLER_SPEC_PLATFORM"]
+  if ENV["BUNDLER_SPEC_PLATFORM"]
+    if ENV["BUNDLER_SPEC_PLATFORM"] == "ruby"
+      @platforms = [Gem::Platform::RUBY]
+    else
+      class Platform
+        @local = new(ENV["BUNDLER_SPEC_PLATFORM"])
+      end
+      @platforms = [Gem::Platform::RUBY, Gem::Platform.local]
+    end
   end
-  @platforms = [Gem::Platform::RUBY, Gem::Platform.local]
 
   # We only need this hack for rubygems versions without the BundlerVersionFinder
   if Gem::Version.new(Gem::VERSION) < Gem::Version.new("2.7.0") || ENV["BUNDLER_SPEC_DISABLE_DEFAULT_BUNDLER_GEM"]
