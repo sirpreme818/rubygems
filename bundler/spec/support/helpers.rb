@@ -414,7 +414,6 @@ module Spec
 
       begin
         install_gems(*gems)
-        yield if block_given?
       ensure
         ENV.replace(env_backup)
       end
