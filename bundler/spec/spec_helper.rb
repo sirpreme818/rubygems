@@ -87,6 +87,10 @@ RSpec.configure do |config|
     if ENV["RUBY"]
       FileUtils.cp_r Spec::Path.bindir, File.join(Spec::Path.root, "lib", "exe")
     end
+
+    extend(Spec::Helpers)
+
+    reset_paths!
   end
 
   config.before :all do
@@ -97,7 +101,6 @@ RSpec.configure do |config|
     original_env = ENV.to_hash
 
     begin
-      reset!
       system_gems []
 
       @command_executions = []
@@ -114,6 +117,7 @@ RSpec.configure do |config|
       end
     ensure
       ENV.replace(original_env)
+      reset!
     end
   end
 
